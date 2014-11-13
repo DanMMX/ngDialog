@@ -73,7 +73,8 @@
 					},
 
 					performCloseDialog: function ($dialog, value) {
-						var id = $dialog.attr('id');
+						var id = $dialog.attr('id'),
+							cssScope = $dialog.data('cssScope');
 
 						if (typeof window.Hammer !== 'undefined') {
 							var hammerTime = angular.element($dialog).scope().hammerTime;
@@ -88,7 +89,7 @@
 							$body.unbind('keydown');
 						}
 
-						if (!$dialog.hasClass($dialog.data('cssScope') + '-closing')){
+						if (!$dialog.hasClass(cssScope + '-closing')){
 							dialogsCount -= 1;
 						}
 
@@ -99,16 +100,16 @@
 								$dialog.scope().$destroy();
 								$dialog.remove();
 								if (dialogsCount === 0) {
-									$body.removeClass($dialog.data('cssScope') + '-open');
+									$body.removeClass(cssScope + '-open');
 									privateMethods.resetBodyPadding();
 								}
 								$rootScope.$broadcast('ngDialog.closed', $dialog);
-							}).addClass($dialog.data('cssScope') + '-closing');
+							}).addClass(cssScope + '-closing');
 						} else {
 							$dialog.scope().$destroy();
 							$dialog.remove();
 							if (dialogsCount === 0) {
-								$body.removeClass($dialog.data('cssScope') + '-open');
+								$body.removeClass(cssScope + '-open');
 								privateMethods.resetBodyPadding();
 							}
 							$rootScope.$broadcast('ngDialog.closed', $dialog);
