@@ -1,6 +1,7 @@
 /*
  * ngDialog - easy modals and popup windows
  * http://github.com/likeastore/ngDialog
+ * Fork from https://github.com/DanMMX/ngDialog
  * (c) 2013 MIT License, https://likeastore.com
  */
 
@@ -163,6 +164,7 @@
 					 * - controller {String}
 					 * - className {String} - dialog theme class
 					 * - cssScope {String} - css scope name
+					 * - closeBtnClass {String} - close button class name
 					 * - showClose {Boolean} - show close button, default true
 					 * - closeByEscape {Boolean} - default true
 					 * - closeByDocument {Boolean} - default true
@@ -192,7 +194,11 @@
 							$templateCache.put(options.template || options.templateUrl, template);
 
 							if (options.showClose) {
-								template += '<div class="' + options.cssScope + '-close"></div>';
+								if (options.closeBtnClass) {
+									template += '<div class="' + options.closeBtnClass + '"></div>';
+								} else {
+									template += '<div class="' + options.cssScope + '-close"></div>';
+								}
 							}
 
 							self.$result = $dialog = $el('<div id="' + options.cssScope + globalID + '" class="' + options.cssScope + ' ngdialog"></div>');
@@ -285,7 +291,7 @@
 
 							closeByDocumentHandler = function (event) {
 								var isOverlay = options.closeByDocument ? $el(event.target).hasClass(options.cssScope + '-overlay') : false;
-								var isCloseBtn = $el(event.target).hasClass(options.cssScope + '-close');
+								var isCloseBtn = $el(event.target).hasClass(options.cssScope + '-close') || options.closeBtnClass && $el(event.target).hasClass(options.closeBtnClass);
 
 								if (isOverlay || isCloseBtn) {
 									publicMethods.close($dialog.attr('id'), isCloseBtn ? '$closeButton' : '$document');
@@ -344,6 +350,7 @@
 					 * - controller {String}
 					 * - className {String} - dialog theme class
 					 * - cssScope {String} - css scope name
+					 * - closeBtnClass {String} - close button class name
 					 * - showClose {Boolean} - show close button, default true
 					 * - closeByEscape {Boolean} - default false
 					 * - closeByDocument {Boolean} - default false
