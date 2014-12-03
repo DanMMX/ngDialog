@@ -1,7 +1,6 @@
 /*
  * ngDialog - easy modals and popup windows
  * http://github.com/likeastore/ngDialog
- * Fork from https://github.com/DanMMX/ngDialog
  * (c) 2013 MIT License, https://likeastore.com
  */
 
@@ -228,7 +227,7 @@
 							if (options.cssScope) {
 								$dialog.data('cssScope', options.cssScope)
 							}
-						
+
 							if (options.appendTo && angular.isString(options.appendTo)) {
 								$dialogParent = angular.element(document.querySelector(options.appendTo));
 							} else {
@@ -440,6 +439,7 @@
 						controller: attrs.ngDialogController,
 						scope: ngDialogScope,
 						data: attrs.ngDialogData,
+						closeBtnClass: attrs.ngDialogCloseBtnClass || defaults.closeBtnClass,
 						showClose: attrs.ngDialogShowClose === 'false' ? false : (attrs.ngDialogShowClose === 'true' ? true : defaults.showClose),
 						closeByDocument: attrs.ngDialogCloseByDocument === 'false' ? false : (attrs.ngDialogCloseByDocument === 'true' ? true : defaults.closeByDocument),
 						closeByEscape: attrs.ngDialogCloseByEscape === 'false' ? false : (attrs.ngDialogCloseByEscape === 'true' ? true : defaults.closeByEscape),
