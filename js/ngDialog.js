@@ -28,7 +28,8 @@
 			appendTo: false,
 			preCloseCallback: false,
 			overlay: true,
-			cache: true
+			cache: true,
+			useContainer: false
 		};
 
 		this.setForceBodyReload = function (_useIt) {
@@ -168,6 +169,7 @@
 					 * - closeByEscape {Boolean} - default true
 					 * - closeByDocument {Boolean} - default true
 					 * - preCloseCallback {String|Function} - user supplied function name/function called before closing dialog (if set)
+					 * - useContainer {String} - container do wrap the content
 					 *
 					 * @return {Object} dialog
 					 */
@@ -201,9 +203,10 @@
 							}
 
 							self.$result = $dialog = $el('<div id="' + options.cssScope + globalID + '" class="' + options.cssScope + ' ngdialog"></div>');
-							$dialog.html((options.overlay ?
-								'<div class="' + options.cssScope + '-overlay"></div><div class="' + options.cssScope + '-content">' + template + '</div>' :
-								'<div class="' + options.cssScope + '-content">' + template + '</div>'));
+							$dialog.html((options.overlay ? '<div class="' + options.cssScope + '-overlay"></div>' : '') +
+								(options.useContainer ? '<div class="' + options.cssScope +'-dialog">' : '') +
+								'<div class="' + options.cssScope + '-content">' + template + '</div></div>' +
+								(options.useContainer ? '</div>' : ''));
 
 							if (options.data && angular.isString(options.data)) {
 								var firstLetter = options.data.replace(/^\s*/, '')[0];
@@ -354,6 +357,7 @@
 					 * - closeByEscape {Boolean} - default false
 					 * - closeByDocument {Boolean} - default false
 					 * - preCloseCallback {String|Function} - user supplied function name/function called before closing dialog (if set); not called on confirm
+					 * - useContainer {String} - container do wrap the content
 					 *
 					 * @return {Object} dialog
 					 */
@@ -439,6 +443,7 @@
 						controller: attrs.ngDialogController,
 						scope: ngDialogScope,
 						data: attrs.ngDialogData,
+					 	useContainer: attrs.ngDialogContainer || defaults.useContainer,
 						closeBtnClass: attrs.ngDialogCloseBtnClass || defaults.closeBtnClass,
 						showClose: attrs.ngDialogShowClose === 'false' ? false : (attrs.ngDialogShowClose === 'true' ? true : defaults.showClose),
 						closeByDocument: attrs.ngDialogCloseByDocument === 'false' ? false : (attrs.ngDialogCloseByDocument === 'true' ? true : defaults.closeByDocument),
