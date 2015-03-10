@@ -32,6 +32,7 @@
 		var defaults = this.defaults = {
 			className: 'ngdialog-theme-default',
 			cssScope: 'ngdialog',
+			cssScopeModifier: '',
 			plain: false,
 			showClose: true,
 			closeByDocument: true,
@@ -87,7 +88,8 @@
 
 					performCloseDialog: function ($dialog, value) {
 						var id = $dialog.attr('id'),
-							cssScope = $dialog.data('cssScope');
+							cssScope = $dialog.data('cssScope'),
+							cssScopeModifier = $dialog.data('cssScopeModifier');
 
 						if (typeof $window.Hammer !== 'undefined') {
 							var hammerTime = scope.hammerTime;
@@ -114,7 +116,10 @@
 								$dialog.remove();
 								if (dialogsCount === 0) {
 									$body.removeClass(cssScope + '-open');
+									$body.removeClass(cssScopeModifier);
 									privateMethods.resetBodyPadding();
+								} else {
+									$body.removeClass(cssScopeModifier);
 								}
 								$rootScope.$broadcast('ngDialog.closed', $dialog);
 							}).addClass(cssScope + '-closing');
@@ -123,7 +128,10 @@
 							$dialog.remove();
 							if (dialogsCount === 0) {
 								$body.removeClass(cssScope + '-open');
+								$body.removeClass(cssScopeModifier);
 								privateMethods.resetBodyPadding();
+							} else {
+								$body.removeClass(cssScopeModifier);
 							}
 							$rootScope.$broadcast('ngDialog.closed', $dialog);
 						}
@@ -176,6 +184,7 @@
 					 * - controller {String}
 					 * - className {String} - dialog theme class
 					 * - cssScope {String} - css scope name
+					 * - cssScopeModifier {String} - css scope modifier name
 					 * - closeBtnClass {String} - close button class name
 					 * - showClose {Boolean} - show close button, default true
 					 * - closeByEscape {Boolean} - default true
@@ -188,13 +197,12 @@
 					open: function (opts) {
 						var self = this;
 						var options = angular.copy(defaults);
+						var currentId = ++globalID;
 
 						opts = opts || {};
 						angular.extend(options, opts);
 
-						globalID += 1;
-
-						self.latestID = options.cssScope + globalID;
+						self.latestID = options.cssScope + currentId + '';
 
 						var defer;
 						defers[self.latestID] = defer = $q.defer();
@@ -214,7 +222,7 @@
 								}
 							}
 
-							self.$result = $dialog = $el('<div id="' + options.cssScope + globalID + '" class="' + options.cssScope + ' ngdialog"></div>');
+							self.$result = $dialog = $el('<div id="' + options.cssScope + currentId + '" class="' + options.cssScope + ' ' + options.cssScopeModifier + ' ngdialog"></div>');
 							$dialog.html((options.overlay ? '<div class="' + options.cssScope + '-overlay"></div>' : '') +
 								(options.useContainer ? '<div class="' + options.cssScope +'-dialog">' : '') +
 								'<div class="' + options.cssScope + '-content">' + template + '</div></div>' +
@@ -240,7 +248,11 @@
 							}
 
 							if (options.cssScope) {
-								$dialog.data('cssScope', options.cssScope)
+								$dialog.data('cssScope', options.cssScope);
+							}
+
+							if (options.cssScopeModifier !== '') {
+								$dialog.data('cssScopeModifier', options.cssScopeModifier)
 							}
 
 							if (options.appendTo && angular.isString(options.appendTo)) {
@@ -278,7 +290,7 @@
 							$timeout(function () {
 								$compile($dialog)(scope);
 								var widthDiffs = $window.innerWidth - $body.prop('clientWidth');
-								$body.addClass(options.cssScope + '-open');
+								$body.addClass(options.cssScopeModifier + ' ' + options.cssScope + '-open');
 								var scrollBarWidth = widthDiffs - ($window.innerWidth - $body.prop('clientWidth'));
 								if (scrollBarWidth > 0) {
 									privateMethods.setBodyPadding(scrollBarWidth);
@@ -324,7 +336,7 @@
 						});
 
 						return {
-							id: options.cssScope + globalID,
+							id: options.cssScope + currentId,
 							closePromise: defer.promise,
 							close: function (value) {
 								privateMethods.closeDialog($dialog, value);
@@ -363,6 +375,7 @@
 					 * - controller {String}
 					 * - className {String} - dialog theme class
 					 * - cssScope {String} - css scope name
+					 * - cssScopeModifier {String} - css scope modifier name
 					 * - closeBtnClass {String} - close button class name
 					 * - showClose {Boolean} - show close button, default true
 					 * - closeByEscape {Boolean} - default false
@@ -451,6 +464,7 @@
 						template: attrs.ngDialog,
 						className: attrs.ngDialogClass || defaults.className,
 						cssScope: attrs.ngDialogCssScope || defaults.cssScope,
+						cssScopeModifier: attrs.ngDialogCssScopeModifier || defaults.cssScopeModifier,
 						controller: attrs.ngDialogController,
 						scope: ngDialogScope,
 						data: attrs.ngDialogData,
