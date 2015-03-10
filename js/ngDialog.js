@@ -1,13 +1,24 @@
 /*
  * ngDialog - easy modals and popup windows
  * http://github.com/likeastore/ngDialog
- * (c) 2013 MIT License, https://likeastore.com
+ * (c) 2013-2015 MIT License, https://likeastore.com
  */
 
-(function (window, angular, undefined) {
+(function (root, factory) {
+    if (typeof module !== 'undefined' && module.exports) {
+        // CommonJS
+        module.exports = factory(require('angular'));
+    } else if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['angular'], factory);
+    } else {
+        // Global Variables
+        factory(root.angular);
+    }
+}(this, function (angular, undefined) {
 	'use strict';
 
-	var module = angular.module('ngDialog', []);
+	var m = angular.module('ngDialog', []);
 
 	var $el = angular.element;
 	var isDef = angular.isDefined;
@@ -15,8 +26,9 @@
 	var animationEndSupport = isDef(style.animation) || isDef(style.WebkitAnimation) || isDef(style.MozAnimation) || isDef(style.MsAnimation) || isDef(style.OAnimation);
 	var animationEndEvent = 'animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend';
 	var forceBodyReload = false;
+	var scope;
 
-	module.provider('ngDialog', function () {
+	m.provider('ngDialog', function () {
 		var defaults = this.defaults = {
 			className: 'ngdialog-theme-default',
 			cssScope: 'ngdialog',
@@ -77,11 +89,11 @@
 						var id = $dialog.attr('id'),
 							cssScope = $dialog.data('cssScope');
 
-						if (typeof window.Hammer !== 'undefined') {
-							var hammerTime = angular.element($dialog).scope().hammerTime;
+						if (typeof $window.Hammer !== 'undefined') {
+							var hammerTime = scope.hammerTime;
 							hammerTime.off('tap', closeByDocumentHandler);
-							hammerTime.destroy();
-							delete $dialog.scope().hammerTime;
+							hammerTime.destroy && hammerTime.destroy();
+							delete scope.hammerTime;
 						} else {
 							$dialog.unbind('click');
 						}
@@ -95,10 +107,10 @@
 						}
 
 						$rootScope.$broadcast('ngDialog.closing', $dialog);
-
+						dialogsCount = dialogsCount < 0 ? 0: dialogsCount;
 						if (animationEndSupport) {
+							scope.$destroy();
 							$dialog.unbind(animationEndEvent).bind(animationEndEvent, function () {
-								$dialog.scope().$destroy();
 								$dialog.remove();
 								if (dialogsCount === 0) {
 									$body.removeClass(cssScope + '-open');
@@ -107,7 +119,7 @@
 								$rootScope.$broadcast('ngDialog.closed', $dialog);
 							}).addClass(cssScope + '-closing');
 						} else {
-							$dialog.scope().$destroy();
+							scope.$destroy();
 							$dialog.remove();
 							if (dialogsCount === 0) {
 								$body.removeClass(cssScope + '-open');
@@ -187,7 +199,7 @@
 						var defer;
 						defers[self.latestID] = defer = $q.defer();
 
-						var scope = angular.isObject(options.scope) ? options.scope.$new() : $rootScope.$new();
+						scope = angular.isObject(options.scope) ? options.scope.$new() : $rootScope.$new();
 						var $dialog, $dialogParent;
 
 						$q.when(loadTemplate(options.template || options.templateUrl)).then(function (template) {
@@ -212,7 +224,7 @@
 								var firstLetter = options.data.replace(/^\s*/, '')[0];
 								scope.ngDialogData = (firstLetter === '{' || firstLetter === '[') ? angular.fromJson(options.data) : options.data;
 							} else if (options.data && angular.isObject(options.data)) {
-								scope.ngDialogData = angular.fromJson(angular.toJson(options.data));
+								scope.ngDialogData = options.data;
 							}
 
 							if (options.controller && (angular.isString(options.controller) || angular.isArray(options.controller) || angular.isFunction(options.controller))) {
@@ -265,7 +277,6 @@
 
 							$timeout(function () {
 								$compile($dialog)(scope);
-
 								var widthDiffs = $window.innerWidth - $body.prop('clientWidth');
 								$body.addClass(options.cssScope + '-open');
 								var scrollBarWidth = widthDiffs - ($window.innerWidth - $body.prop('clientWidth'));
@@ -300,8 +311,8 @@
 								}
 							};
 
-							if (typeof window.Hammer !== 'undefined') {
-								var hammerTime = scope.hammerTime = window.Hammer($dialog[0]);
+							if (typeof $window.Hammer !== 'undefined') {
+								var hammerTime = scope.hammerTime = $window.Hammer($dialog[0]);
 								hammerTime.on('tap', closeByDocumentHandler);
 							} else {
 								$dialog.bind('click', closeByDocumentHandler);
@@ -421,7 +432,7 @@
 			}];
 	});
 
-	module.directive('ngDialog', ['ngDialog', function (ngDialog) {
+	m.directive('ngDialog', ['ngDialog', function (ngDialog) {
 		return {
 			restrict: 'A',
 			scope : {
@@ -455,4 +466,5 @@
 		};
 	}]);
 
-})(window, window.angular);
+	return m;
+}));

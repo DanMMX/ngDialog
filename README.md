@@ -14,6 +14,12 @@ You can download all necessary ngDialog files manually or install it with bower:
 bower install ngDialog
 ```
 
+or npm:
+
+```bash
+npm install ng-dialog
+```
+
 ## Usage
 
 You need only to include ``ngDialog.js`` and  ``ngDialog.css`` (as minimal setup) to your project and then you can start using ``ngDialog`` provider in your directives, controllers and services. For example in controllers:
@@ -125,7 +131,7 @@ Any value passed to this function will be attached to the object which resolves 
 
 ##### ``data {String | Object | Array}``
 
-Any serializable data that you want to be stored in controller's ``$parent`` scope.
+Any serializable data that you want to be stored in controller's dialog scope. (``$scope.ngDialogData``). From version `0.3.6` `$scope.ngDialogData` keeps references to the objects instead of copying them.
 
 ##### ``className {String}``
 
@@ -361,12 +367,13 @@ Currently _ngDialog_ contains two default themes that show how easily you can cr
 
 ## CDN
 
-_ngDialog_ is available for public on [cdnjs](http://cdnjs.com/libraries/ng-dialog). For example, please use following urls for version ``0.3.0``.
+_ngDialog_ is available for public on [cdnjs](http://cdnjs.com/libraries/ng-dialog). For example, please use following urls for version ``0.3.7``.
 
 ```html
-//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.0/ng-dialog.min.css
-//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.0/ng-dialog-theme-plain.min.css
-//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.0/ng-dialog.min.js
+//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.7/css/ngDialog.min.css
+//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.7/css/ngDialog-theme-default.min.css
+//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.7/css/ngDialog-theme-plain.min.css
+//cdnjs.cloudflare.com/ajax/libs/ng-dialog/0.3.7/js/ngDialog.min.js
 ```
 
 ## References
@@ -377,7 +384,7 @@ _ngDialog_ default styles are heavily inspired by awesome [Hubspot/Vex](https://
 
 MIT Licensed
 
-Copyright (c) 2013-2014, Likeastore.com <info@likeastore.com>
+Copyright (c) 2013-2015, Likeastore.com <info@likeastore.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
