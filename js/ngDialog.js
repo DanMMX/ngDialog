@@ -315,8 +315,13 @@
 							}
 
 							closeByDocumentHandler = function (event) {
-								var isOverlay = options.closeByDocument ? $el(event.target).hasClass(options.cssScope + '-overlay') : false;
+								var isOverlay = false;
 								var isCloseBtn = $el(event.target).hasClass(options.cssScope + '-close') || options.closeBtnClass && $el(event.target).hasClass(options.closeBtnClass);
+
+								if (options.closeByDocument && ($el(event.target).hasClass(options.cssScope + '-overlay') || $el(event.target).hasClass(options.cssScope + '-dialog'))) {
+									isOverlay = true;
+								}
+
 
 								if (isOverlay || isCloseBtn) {
 									publicMethods.close($dialog.attr('id'), isCloseBtn ? '$closeButton' : '$document');
